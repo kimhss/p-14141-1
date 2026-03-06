@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/glog_test?reWriteBatchedInserts=true
+    username: postgres
+    password: lldj123414
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: com.back.global.jpa.config.CustomTestPostgreSQLDialect
