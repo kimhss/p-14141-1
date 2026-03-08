@@ -28,14 +28,15 @@ class MemberRepositoryImpl(
 
     override fun findQPagedByKw(kw: String, pageable: Pageable): Page<Member> {
         val builder = BooleanBuilder()
+        val normalizedKw = kw.trim()
 
-        if (kw.isNotBlank()) {
+        if (normalizedKw.isNotEmpty()) {
             builder.and(
                 Expressions.booleanTemplate(
                     "function('pgroonga_match', {0}, {1}, {2}) = true",
                     member.username,
                     member.nickname,
-                    Expressions.constant(kw.trim())
+                    Expressions.constant(normalizedKw)
                 )
             )
         }

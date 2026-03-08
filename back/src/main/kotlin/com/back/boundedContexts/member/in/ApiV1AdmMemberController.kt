@@ -23,12 +23,13 @@ class ApiV1AdmMemberController(
         @RequestParam(defaultValue = "") kw: String,
         @RequestParam(defaultValue = "CREATED_AT") sort: MemberSearchSortType1,
     ): PageDto<MemberWithUsernameDto> {
-        val normalizedPage = if (page >= 1) page else 1
-        val normalizedPageSize = if (pageSize in 1..30) pageSize else 30
+        val normalizedPage = page.coerceAtLeast(1)
+        val normalizedPageSize = pageSize.coerceIn(1, 30)
+        val normalizedKw = kw.trim()
 
         return PageDto(
             memberFacade.findPagedByKw(
-                kw = kw,
+                kw = normalizedKw,
                 sort = sort,
                 page = normalizedPage,
                 pageSize = normalizedPageSize,

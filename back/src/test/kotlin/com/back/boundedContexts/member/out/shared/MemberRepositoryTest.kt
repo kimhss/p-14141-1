@@ -33,6 +33,12 @@ class MemberRepositoryTest {
             PageRequest.of(0, 100, MemberSearchSortType1.CREATED_AT.sortBy)
         )
 
+    private fun usernamesBy(kw: String): List<String> =
+        search(kw).content.map(Member::username)
+
+    private fun nicknamesBy(kw: String): List<String> =
+        search(kw).content.map(Member::nickname)
+
     @Nested
     inner class `1 기본 검색` {
         @Test
@@ -40,10 +46,9 @@ class MemberRepositoryTest {
             join("zzalpha-user", "평범한닉네임")
             join("zzbeta-user", "다른닉네임")
 
-            val result = search("zzalpha")
-
-            assertThat(result.content.map { it.username }).contains("zzalpha-user")
-            assertThat(result.content.map { it.username }).doesNotContain("zzbeta-user")
+            assertThat(usernamesBy("zzalpha"))
+                .contains("zzalpha-user")
+                .doesNotContain("zzbeta-user")
         }
 
         @Test
@@ -51,10 +56,9 @@ class MemberRepositoryTest {
             join("plain-user-a", "망고 연구회")
             join("plain-user-b", "사과 연구회")
 
-            val result = search("망고")
-
-            assertThat(result.content.map { it.nickname }).contains("망고 연구회")
-            assertThat(result.content.map { it.nickname }).doesNotContain("사과 연구회")
+            assertThat(nicknamesBy("망고"))
+                .contains("망고 연구회")
+                .doesNotContain("사과 연구회")
         }
 
         @Test
@@ -62,10 +66,8 @@ class MemberRepositoryTest {
             join("papaya-user", "여름모임")
             join("summer-user", "papaya club")
 
-            val result = search("papaya")
-
-            assertThat(result.content.map { it.username }).contains("summer-user")
-            assertThat(result.content.map { it.username }).contains("papaya-user")
+            assertThat(usernamesBy("papaya"))
+                .contains("summer-user", "papaya-user")
         }
     }
 
@@ -77,9 +79,8 @@ class MemberRepositoryTest {
             join("android-only", "안드로이드 레시피")
             join("guide-only", "개발 가이드")
 
-            val result = search("안드로이드 가이드")
-
-            assertThat(result.content.map { it.username }).containsExactly("android-a")
+            assertThat(usernamesBy("안드로이드 가이드"))
+                .containsExactly("android-a")
         }
 
         @Test
@@ -88,9 +89,8 @@ class MemberRepositoryTest {
             join("cloud-only", "클라우드 운영")
             join("cluster-only", "클러스터 운영팀")
 
-            val result = search("+cloud +클러스터")
-
-            assertThat(result.content.map { it.username }).containsExactly("cloud-aws")
+            assertThat(usernamesBy("+cloud +클러스터"))
+                .containsExactly("cloud-aws")
         }
 
         @Test
@@ -99,9 +99,7 @@ class MemberRepositoryTest {
             join("javascript-user", "웹 개발")
             join("java-user", "백엔드 개발")
 
-            val result = search("python OR javascript")
-
-            assertThat(result.content.map { it.username })
+            assertThat(usernamesBy("python OR javascript"))
                 .containsExactlyInAnyOrder("python-user", "javascript-user")
         }
     }
@@ -113,9 +111,8 @@ class MemberRepositoryTest {
             join("apple-banana", "과일 연구회")
             join("apple-only", "과일 스터디")
 
-            val result = search("apple -banana")
-
-            assertThat(result.content.map { it.username }).containsExactly("apple-only")
+            assertThat(usernamesBy("apple -banana"))
+                .containsExactly("apple-only")
         }
 
         @Test
@@ -123,9 +120,8 @@ class MemberRepositoryTest {
             join("search-hit", "제외단어 포함")
             join("search-pass", "정상 회원")
 
-            val result = search("search -제외단어")
-
-            assertThat(result.content.map { it.username }).containsExactly("search-pass")
+            assertThat(usernamesBy("search -제외단어"))
+                .containsExactly("search-pass")
         }
 
         @Test
@@ -134,9 +130,8 @@ class MemberRepositoryTest {
             join("fruit-orange", "오렌지 동호회")
             join("fruit-kiwi", "키위 동호회")
 
-            val result = search("fruit -바나나 -오렌지")
-
-            assertThat(result.content.map { it.username }).containsExactly("fruit-kiwi")
+            assertThat(usernamesBy("fruit -바나나 -오렌지"))
+                .containsExactly("fruit-kiwi")
         }
     }
 
@@ -147,9 +142,8 @@ class MemberRepositoryTest {
             join("phrase-hit", "빠른 정렬 연구회")
             join("phrase-miss", "빠른 알고리즘 정렬 연구회")
 
-            val result = search("\"빠른 정렬\"")
-
-            assertThat(result.content.map { it.username }).containsExactly("phrase-hit")
+            assertThat(usernamesBy("\"빠른 정렬\""))
+                .containsExactly("phrase-hit")
         }
 
         @Test
@@ -158,9 +152,7 @@ class MemberRepositoryTest {
             join("springboot-lab", "자동설정")
             join("hibernate-lab", "ORM")
 
-            val result = search("spring*")
-
-            assertThat(result.content.map { it.username })
+            assertThat(usernamesBy("spring*"))
                 .containsExactlyInAnyOrder("spring-guide", "springboot-lab")
         }
 
@@ -170,9 +162,7 @@ class MemberRepositoryTest {
             join("postgres-designer", "데이터 설계")
             join("mysql-backup", "백업 운영")
 
-            val result = search("(mysql OR postgres) 설계")
-
-            assertThat(result.content.map { it.username })
+            assertThat(usernamesBy("(mysql OR postgres) 설계"))
                 .containsExactlyInAnyOrder("mysql-designer", "postgres-designer")
         }
 
@@ -183,9 +173,7 @@ class MemberRepositoryTest {
             join("python-ml", "머신러닝 실험실")
             join("r-ml", "통계 머신러닝")
 
-            val result = search("(python OR r) -머신러닝")
-
-            assertThat(result.content.map { it.username })
+            assertThat(usernamesBy("(python OR r) -머신러닝"))
                 .containsExactlyInAnyOrder("python-crawler", "r-visualizer")
         }
     }
