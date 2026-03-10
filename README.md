@@ -33,7 +33,7 @@ flowchart TD
 
 | 서비스 영역 | 경로 | 역할 및 기술 스택 | 문서 링크 |
 |------------|----------|-------------------|-----------|
-| **Backend** | `back/` | Kotlin, Spring Boot, JPA, QueryDSL, OAuth2 | [📖 백엔드 63강 설계 리뷰 보기](back/readme.md) |
+| **Backend** | `back/` | Kotlin, Spring Boot, JPA, QueryDSL, OAuth2 | [📖 백엔드 63강 설계 리뷰 보기](back/README.md) |
 | **Frontend** | `front/` | Next.js (App Router), TypeScript, Tailwind | [📖 프론트엔드 연동 가이드 보기](front/README.md) |
 | **Infra** | `infra/` | Terraform, AWS EC2, VPC, Security Group | [📖 인프라 프로비저닝 가이드 보기](infra/README.md) |
 | **CI/CD** | `.github/workflows/` | GitHub Actions, GHCR, Blue/Green Deploy | [📖 자동화 배포 파이프라인 가이드 보기](.github/workflows/README.md) |
