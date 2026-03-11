@@ -60,12 +60,12 @@ spring:
     redis:
       host: ${custom.site.redisHost}
       port: 6379
-      password: realpassword1234
+      password: lldj123414
       database: ${custom.site.redisDatabase}
   datasource:
     url: jdbc:postgresql://${custom.site.dbHost}:5432/${custom.site.dbName}?reWriteBatchedInserts=true
     username: postgres
-    password: realpassword1234
+    password: lldj123414
     driver-class-name: org.postgresql.Driver
     hikari:
       auto-commit: false
